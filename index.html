@@ -1,0 +1,245 @@
+   <!DOCTYPE html>
+   <html>
+   <head><title>BMI Calculator for adults - Health Total</title>
+       <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+       <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+
+       <style type="text/css">
+           body,h1,h2,h3,h4,h5,h6,*{font-family: 'Source Sans Pro', sans-serif;}
+           h2{margin-top: 0;text-align: center;}
+       </style>
+       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.min.js"></script>
+       <script type="text/javascript">
+           var bmiApp=angular.module('bmiApp',[]);
+           bmiApp.filter('range', function() {
+               return function (input, total) {
+                   total = parseInt(total);
+
+                   for (var i = 0; i < total; i++) {
+                       input.push(i);
+                   }
+
+                   return input;
+               }
+           });
+           bmiApp.controller('BmiController', function($scope){
+               var globalHeight;
+               var globalBMI;
+               $scope.weight=80;
+               $scope.feet=5;
+               $scope.inches=6;
+               $scope.convertHeight=function(feet, inches){
+                   var convertedHeight = parseInt(feet*12)+parseInt(inches);
+                   convertedHeight = ((convertedHeight*parseFloat(2.54))/100).toFixed(2);
+                   $scope.globalHeight = convertedHeight;
+                   return convertedHeight;
+               };
+
+               $scope.calcBMI=function(globalHeight, weight){
+                   var bmi=(weight/Math.pow(globalHeight,2));
+                   globalBMI=bmi;
+                   return bmi.toFixed(2);
+               };
+
+               $scope.globalBMI=globalBMI;
+
+               $scope.categorize=function(globalHeight, weight){
+                   var bmi=(weight/Math.pow(globalHeight,2));
+                   var category;
+                   if(bmi>30){
+                       category="obese";
+                   } else if(bmi>25 && bmi<29.99) {
+                       category="overweight";
+                   }else if(bmi>18.5 && bmi<24.99) {
+                       category="healthy";
+                   }else if(bmi<18.5) {
+                       category="underweight";
+                   };
+                   return category;
+               };
+
+               $scope.getIdealWeight = function(feet, inches){
+
+                   $scope.ht_m = $scope.convertHeight(feet,inches);
+                   console.log($scope.ht_m);
+                   $scope.minWt = (parseFloat(18.5)*parseFloat($scope.ht_m)*parseFloat($scope.ht_m)).toFixed(2);
+                   $scope.maxWt = (parseFloat(25)*parseFloat($scope.ht_m)*parseFloat($scope.ht_m)).toFixed(2);
+
+                   $scope.ht = parseInt(feet*12)+parseInt(inches);
+                   $scope.calht = parseFloat($scope.ht)-parseFloat(60);
+
+                   //Age Independent
+                   if($scope.user.gender=="Male"){
+                       $scope.robinson = parseFloat(parseFloat(52)+parseFloat(1.9*$scope.calht)).toFixed(2);
+                       $scope.miller = parseFloat(parseFloat(56.2)+parseFloat(1.41*$scope.calht)).toFixed(2);
+                       $scope.hamwi = parseFloat(parseFloat(48)+parseFloat(2.7*$scope.calht)).toFixed(2);
+                       $scope.devine = parseFloat(parseFloat(50)+parseFloat(2.3*$scope.calht)).toFixed(2);
+                       $scope.healthtotal = parseFloat(parseFloat(50)+parseFloat(2.2*$scope.calht)).toFixed(2);
+                   }else{
+                       $scope.robinson = parseFloat(parseFloat(49)+parseFloat(1.7*$scope.calht)).toFixed(2);
+                       $scope.miller = parseFloat(parseFloat(53.1)+parseFloat(1.36*$scope.calht)).toFixed(2);
+                       $scope.hamwi = parseFloat(parseFloat(45.5)+parseFloat(2.2*$scope.calht)).toFixed(2);
+                       $scope.devine = parseFloat(parseFloat(45.5)+parseFloat(2.3*$scope.calht)).toFixed(2);
+                       $scope.healthtotal = parseFloat(parseFloat(49)+parseFloat(1.7*$scope.calht)).toFixed(2);
+                   }
+
+               }
+
+
+           });
+
+
+       </script>
+   </head>
+
+   <body ng-app="bmiApp">
+   <div class="container" style="border: 1px solid #f8f8f8;" >
+       <nav class="navbar" style="border-bottom: 1px solid #f8f8f8;padding:10px 0">
+           <div class="container-fluid">
+               <a class="pull-left" href="#"><img src="http://www.health-total.com/wp-content/themes/healthtotal/images/logo.png"> </a>
+               <a class="navbar-brand pull-right" href="#">Health Total - BMI &amp; Ideal Weight Calculator</a>
+
+           </div>
+       </nav>
+
+       <div ng-controller="BmiController">
+           <div class="container">
+               <div class="col-md-7 col-sm-7 col-xs-6">
+                   <h2>BMI Calculator - Health Total</h2>
+
+                   <form class="form-horizontal">
+                      <div class="form-group">
+                        <label class="control-label col-sm-3" for="weight">Weight ({{weight}} Kg) </label>
+                        <div class="col-sm-9">
+                           <div class="input-group">      
+                          <input type="text" class="form-control" id="weight" ng-model="weight" placeholder="weight in Kg"><span class="input-group-addon">Kg</span>
+                          </div>
+
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="control-label col-sm-3" for="feet">Height: ({{feet}}' {{inches}}'') </label>
+                        <div class="col-sm-9">    
+                        <div class="input-group">      
+                          <input type="text" class="form-control" id="feet" ng-model="feet" placeholder="height in feet"> <span class="input-group-addon">Feets</span>
+                          </div><br>
+                         <div class="input-group">      
+                          <input type="text" class="form-control" id="inches" ng-model="inches" placeholder="height in inches"><span class="input-group-addon">Inches</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-sm-3">Gender</label>
+                        <div class="col-sm-9">          
+                             
+
+                            <label class="radio-inline">
+                            <input type="radio" ng-model="user.gender" value="Female" name="gender">Female </label>
+<label class="radio-inline"><input type="radio" ng-model="user.gender" value="Male" name="gender">Male</label>
+
+
+                        </div>
+                      </div>
+
+                      <div class="form-group ">
+                        <label class="control-label col-sm-3">Age: </label>
+                        <div class="col-sm-9">          
+                             <select class="" ng-model="user.age">
+                                                      <option ng-repeat="n in [] | range:100" value="{{$index+1}}" ng-if="$index>17">{{$index+1}}</option>
+                                                  </select>
+                          </div>
+                         
+                      </div>
+
+
+
+
+                     
+                      <div class="form-group">        
+                        <div class="col-sm-offset-3 col-sm-9">
+                          <button type="submit" class="btn btn-success" ng-click="getIdealWeight(feet, inches)">Find Ideal Weight</button>
+                        </div>
+                      </div>
+                    </form>
+
+
+
+
+               </div>
+
+
+               <div class="col-md-5 col-sm-5 col-xs-6 alert alert-info text-center">
+                   <h5 class="text-center">BMI</h5>
+                   <div class="btn btn-warning">
+                       <h1>{{calcBMI(globalHeight,weight)}}</h1>
+                   </div>
+               </div>
+               <button class="btn btn-info btn-lg">Height: {{convertHeight(feet, inches)}} m</button>
+               <button class="btn btn-info btn-lg">{{categorize(globalHeight, weight)}}</button>
+           </div>
+
+           <div class="ideal-weight col-md-12">
+               <ul class="list-group ">
+                   <li class="list-group-item active">Based on Health Total formula, your ideal weight is <span class="badge">{{healthtotal}} Kg</span></li>
+                   <li class="list-group-item">Based on the healthy BMI recommendation, your recommended weight is <span class="badge">{{minWt}} - {{maxWt}} Kg</span></li>
+                   <li class="list-group-item">Based on the Robinson formula (1983), your ideal weight is <span class="badge">{{robinson}} Kg</span></li>
+                   <li class="list-group-item">Based on the Miller formula (1983), your ideal weight is <span class="badge">{{miller}} Kg</span></li>
+                   <li class="list-group-item">Based on the Devine formula (1974), your ideal weight is <span class="badge">{{devine}} Kg</span></li>
+                   <li class="list-group-item">Based on the Hamwi formula (1964), your ideal weight is <span class="badge">{{hamwi}} Kg</span></li>
+               </ul>
+           </div>
+
+       </div>
+
+       <footer>
+           <div class="refrences container">
+               <h3>Reference:</h3>
+               <div class="col-md-6">
+                   <h4>J. D. Robinson Formula (1983)</h4>
+                   <ul>
+                       <li>52 kg + 1.9 kg per inch over 5 feet       (man)</li>
+                       <li>49 kg + 1.7 kg per inch over 5 feet       (woman)</li>
+                   </ul>
+               </div>
+               <div class="col-md-6">
+                   <h4>D. R. Miller Formula (1983)</h4>
+                   <ul>
+                       <li>56.2 kg + 1.41 kg per inch over 5 feet       (man)</li>
+                       <li>53.1 kg + 1.36 kg per inch over 5 feet       (woman)</li>
+                   </ul>
+               </div>
+               <div class="col-md-6">
+                   <h4>G. J. Hamwi Formula (1964)</h4>
+                   <ul>
+                       <li>48.0 kg + 2.7 kg per inch over 5 feet       (man)</li>
+                       <li>45.5 kg + 2.2 kg per inch over 5 feet       (woman)</li>
+                   </ul>
+
+
+               </div>
+               <div class="col-md-6">
+                   <h4>B. J. Devine Formula (1974)</h4>
+                   <ul>
+                       <li>50.0 + 2.3 kg per inch over 5 feet       (man)</li>
+                       <li>45.5 + 2.3 kg per inch over 5 feet       (woman)</li>
+                   </ul>
+                  </div>
+               <div class="col-md-6">
+                   <h4>The World Health Organization (WHO) Recommended Healthy BMI Range</h4>
+                   <ul>
+                       <li>18.5 - 25 for both man and woman</li>
+                   </ul>
+
+               </div>
+
+           </div>
+           <div class="row text-center" style="border-top: 1px solid #f8f8f8;padding:10px 0 ">
+               &copy;2016 <a href="http://health-total.com">Health Total</a> | All Right Reserved.
+           </div>
+
+       </footer>
+   </div>
+   </body>
+   </html>
+
